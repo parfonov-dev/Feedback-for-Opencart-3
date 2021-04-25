@@ -1,0 +1,71 @@
+{% if module_feedback_status %}
+<div class="box">
+  {% if module_title %}
+    <h3>{{ module_title }}</h3>
+  {% endif %}
+  <div class="bordered_content padded">
+    {% if welcome_message %}
+      <p class="margin-b-md">{{ welcome_message }}</p>
+    {% endif %}
+    <div id="respond"></div>
+    <form class="form-horizontal" id="form-contact-form">
+      <div class="form-group required">
+        <div class="col-sm-12">
+          <input type="text" name="name" value="" class="form-control" placeholder="{{ text_name }}" />
+        </div>
+      </div>
+      <div class="form-group required">
+        <div class="col-sm-12">
+          <input type="email" name="email" value="" class="form-control" placeholder="{{ text_email }}" />
+        </div>
+      </div>
+      <div class="form-group required">
+        <div class="col-sm-12">
+          <input type="text" name="phone" value="" class="form-control" placeholder="{{ text_phone }}" />
+        </div>
+      </div>
+      <div class="col-sm-12">
+        <div class="form-group required">
+          <div class="input-group">
+            <span class="input-group-addon captcha_wrap"><img src="index.php?route=extension/module/feedback/captcha" alt="" id="captcha" /></span>
+            <input type="text" name="captcha" value="" class="form-control" />
+          </div>
+        </div>
+      </div>
+      <div class="form-group no_b_margin">
+        <div class="col-sm-12"><button type="button" class="btn btn-primary button_send">{{ text_button }}</button></div>
+      </div>
+
+    </form>
+  </div>
+</div>
+<script type="text/javascript"><!--
+  $('.button_send').on('click', function() {
+    $.ajax({
+      url: 'index.php?route=extension/module/feedback/send_message',
+      type: 'post',
+      dataType: 'json',
+      data: $("#form-contact-form").serialize(),
+
+      complete: function() {
+        $('#captcha').attr('src', '/index.php?route=extension/module/feedback/captcha&date='+new Date().getTime());
+        $('input[name=\'captcha\']').val('');
+      },
+      success: function(json) {
+        $('.alert-success.cf, .alert-danger.cf').remove();
+        if (json['error']) {
+          $('#respond').after('<p class="alert alert-danger cf">' + json['error'] + '</p>');
+        }
+        if (json['success']) {
+          $('#respond').after('<p class="alert alert-success cf">' + json['success'] + '</div>');
+          $('input[name=\'name\']').val('');
+          $('input[name=\'email\']').val('');
+          $('input[name=\'phone\']').val('');
+          $('input[name=\'captcha\']').val('');
+        }
+        $('#captcha').attr('src', '/index.php?route=extension/module/feedback/captcha&date='+new Date().getTime());
+      }
+    });
+  });
+  //--></script>
+{% endif %}
